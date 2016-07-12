@@ -1,0 +1,745 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0056)http://airaup.rentistasuniversitario.com/preregistro.php -->
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<title>Sistema de gestión integral - Rotaract</title>
+    <!-- Bootstrap Core CSS -->
+    <link href="dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- MetisMenu CSS -->
+    <link href="dist/css/metisMenu.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="dist/css/sb-admin-2.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="dist/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- jQuery -->
+    <script src="dist/js/jquery.min.js"></script>
+    <meta name="viewport" content="initial-scale=1">
+
+<script type="text/javascript">
+	function cambiarFondo(titulo,color,io){
+		if (io == "rosado"){
+			titulo.style.color='#FFFFFF';
+			titulo.style.backgroundColor=color;	
+		} else if (io == "blanco"){
+			titulo.style.color='#E4457D';
+			titulo.style.backgroundColor=color;
+		}
+	}
+	
+		$(function() {
+	    $('#registro').keypress(function(e){
+		    if(e.keyCode==13)
+    		$('#aceptar').click();
+	    });
+		
+		var editar = getUrlVars()["a"];
+		
+		if (editar == "e"){
+			document.getElementById('botonesEditar').hidden = true;
+			document.getElementById('anteriorPasoFinal').hidden = true;
+		} else {
+			cambiarPagina('2','0');
+		
+			if (editar == "editarCargos"){
+				cargarClubes();
+				chequearRueda();
+			} else {
+				var formattedInput = MaskedInput({
+					elm: document.getElementById('fechaIng'),
+					format: '___-__-____'
+				});
+				formattedInput.setFormat('__/__/____');
+				formattedInput.setSeparator('/');
+			}
+		}
+	});
+		function getUrlVars() {
+		var vars = {};
+		var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+		vars[key] = value;
+		});
+		return vars;
+	}
+	
+	function cambiarPagina(numero, accion){
+		window.scrollTo(0, 0);
+		
+		var editar = getUrlVars()["a"];
+		var eventos = document.getElementById('cantTipoEvento').value;
+		
+		if (editar == "e"){
+			tipo = "editar";
+		} else if (editar == "editarCargos"){
+			tipo = "editarCargos";
+		} else {
+			tipo = "nuevo";
+		}
+		
+		switch (numero) {
+    		case '1':
+				document.getElementById('paso1').hidden = false;
+				document.getElementById('paso2').hidden = true;
+				document.getElementById('paso3').hidden = true;
+				document.getElementById('paso4').hidden = true;
+				document.getElementById('paso5').hidden = true;	
+				break;
+		    case '2':
+				if ($('input[name=tipoRueda]:checked').val() == 'Interact'){
+					if (tipo == "editarCargos"){
+						document.getElementById("botonInteract").innerHTML = "Finalizar";
+					}
+				}
+				
+				document.getElementById('paso1').hidden = true;
+				document.getElementById('paso2').hidden = false;
+				document.getElementById('paso3').hidden = true;
+				document.getElementById('paso4').hidden = true;
+				document.getElementById('paso5').hidden = true;
+				
+				break;
+		    case '3':
+				if ($('input[name=tipoRueda]:checked').val() == 'Interact' && accion == "sig"){
+					if (tipo == "editarCargos"){
+						validacion = validarDatos(tipo,eventos,'p2');
+						
+						if (validacion == 1){
+							document.registro.submit();
+						}
+					} else {
+						document.getElementById('paso1').hidden = true;
+						document.getElementById('paso2').hidden = true;
+						document.getElementById('paso3').hidden = true;
+						document.getElementById('paso4').hidden = true;
+						document.getElementById('paso5').hidden = false;
+					}	
+				} else if ($('input[name=tipoRueda]:checked').val() == 'Rotary' && accion == "sig"){
+					document.getElementById('paso1').hidden = true;
+					document.getElementById('paso2').hidden = true;
+					document.getElementById('paso3').hidden = true;
+					document.getElementById('paso4').hidden = false;
+					document.getElementById('paso5').hidden = true;
+					
+					if (tipo == "editarCargos"){
+						document.getElementById('botonesAIRAUP').hidden = true;
+					}
+				} else if ($('input[name=tipoRueda]:checked').val() == 'Rotary' && accion == "ant"){
+					document.getElementById('paso1').hidden = true;
+					document.getElementById('paso2').hidden = false;
+					document.getElementById('paso3').hidden = true;
+					document.getElementById('paso4').hidden = true;
+					document.getElementById('paso5').hidden = true;	
+				} else {
+					validacion = validarDatos(tipo,eventos,'p2');
+				
+					if (validacion == "1"){
+						document.getElementById('paso1').hidden = true;
+						document.getElementById('paso2').hidden = true;
+						document.getElementById('paso3').hidden = false;
+						document.getElementById('paso4').hidden = true;
+						document.getElementById('paso5').hidden = true;	
+					}
+				}
+		        break;
+		    case '4':
+				if ($('input[name=tipoRueda]:checked').val() == 'Interact' && accion == "ant"){
+					document.getElementById('paso1').hidden = true;
+					document.getElementById('paso2').hidden = false;
+					document.getElementById('paso3').hidden = true;
+					document.getElementById('paso4').hidden = true;
+					document.getElementById('paso5').hidden = true;
+				} else {
+					validacion = validarDatos(tipo,eventos,'p3');
+				
+					if (validacion == "1"){
+						document.getElementById('paso1').hidden = true;
+						document.getElementById('paso2').hidden = true;
+						document.getElementById('paso3').hidden = true;
+						document.getElementById('paso4').hidden = false;
+						document.getElementById('paso5').hidden = true;
+						
+						if (tipo == "editarCargos"){
+							document.getElementById('botonesAIRAUP').hidden = true;
+						}
+					}
+				}
+		        break;
+		    case '5':
+				validacion = validarDatos(tipo,eventos,'p4');
+				
+				if (validacion == "1"){
+					document.getElementById('paso1').hidden = true;
+					document.getElementById('paso2').hidden = true;
+					document.getElementById('paso3').hidden = true;
+					document.getElementById('paso4').hidden = true;
+					document.getElementById('paso5').hidden = false;
+				}
+			    
+				break;
+		}
+	}
+	
+	function cargarClubes(){
+		var accion = "n";
+		idDistrito = $("#distrito").attr("value");
+		
+		var editar = getUrlVars()["a"];
+		
+		if (editar != "editarCargos"){
+			document.getElementById('rotaract').checked = false;
+			
+			var radios = document.getElementsByName('tipoRueda');
+			for (var i = 0; i< radios.length;  i++){
+		    	radios[i].disabled = false;
+			}
+		}
+		
+		$.getJSON('cargarClubes.php?id=' + idDistrito + '&a=' + accion, function(data){
+			var select = document.getElementById("club"); 
+			select.innerHTML = "";
+			
+			select.innerHTML += "<option value='vacio'></option>";
+			
+			if (data[0]['total'] > 1){
+				select.disabled = false;
+				
+				for (var x = 1; x <= data[0]['total']; x++) {
+					if (data[x]['selected'] == '0'){
+						select.innerHTML += "<option value=\"" + data[x]['idClub'] + "\">" + data[x]['nombre'] + "</option>";
+					} else if (data[x]['selected'] == '1'){
+						select.innerHTML += "<option value=\"" + data[x]['idClub'] + "\" selected='selected'>" + data[x]['nombre'] + "</option>";
+					}
+				}
+			} else {
+				if (data[1]['nombre'] == 'Otro'){
+					select.innerHTML = "";
+					select.innerHTML += "<option value=\"" + data[1]['idClub'] + "\" selected='selected'>" + data[1]['nombre'] + "</option>";
+					select.disabled = true;	
+				} else {
+					select.innerHTML = "";
+					select.innerHTML += "<option value=\"" + data[1]['idClub'] + "\" selected='selected'>" + data[1]['nombre'] + "</option>";
+					select.disabled = false;
+				}
+			}
+		});
+	}
+
+</script>
+
+</head>
+
+<body>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 col-md-offset-4">
+					<img  style="padding:20px" class="img-responsive" src="images/Logo.png" alt="">
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+                <div class="col-lg-12">
+                	<div class="panel panel-default">
+	                	<div id="paso1" class="panel-heading">
+	                            Registro de usuario
+	                        </div>
+	                        <div class="panel-body">
+	                      	<form action="http://airaup.rentistasuniversitario.com/registro.php" method="post" name="registro" id="registro">
+								<div class="row">
+								<div class="col-lg-12">
+									<div class="alert alert-warning">
+													  <p><b>ATENCIÓN:</b> Todos los datos correspondientes a tus cargos y asistencia a eventos tanto en tu club, como en tu distrito y en AIRAUP no vas a poder editarlos una vez que estés registrado. Solo tu Presidente, Secretario y/o RDR podrá hacerlo, te pedimos que revises todo antes de finalizar.  
+														  <br>
+														Para los cargos de Presidente, Secretario y RDR no se permite seleccionar el período en curso y el siguiente dado que tienen acceso a secciones restringidas del sistema.
+														Si estás ejerciendo alguno de estos cargos o lo vas a hacer en el período entrante, luego de registrarte comunicate con tu RDR para que se te asigne el cargo correspondiente.</p>
+									
+									</div>
+								</div>
+								</div>
+								<div id="paso2" class="row panel">
+									<div  class="col-lg-2">										
+	                                        <div class="form-group">
+	                                            <label>Distrito:</label>
+												<select class="form-control" name="distrito" id="distrito" onchange="cargarClubes()">
+													<option value="vacio"></option>
+													<option value="13">4815</option>
+													<option value="17">4845</option>
+													<option value="22">4849</option>
+													<option value="21">4895</option>
+													<option value="20">4905</option>
+													<option value="19">4920</option>
+													<option value="18">4930</option>
+													<option value="16">4945</option>
+													<option value="14">4970</option>
+													<option value="15">4980</option>
+													<option value="23">Otro</option>
+												</select> 
+	                                        </div>
+									</div>
+									<div  class="col-lg-3">	
+											<div class="form-group">
+	                                            <label>Club:</label>
+												<select class="form-control" name="club" id="club" disabled="disabled" onchange="verificarRueda()>
+													<option value="vacio"></option>
+												</select> 
+	                                        </div>
+									</div>
+									<div  class="col-lg-3">			
+											<div class="form-group">
+	                                            <label>Fecha de ingreso: </label>
+												<input class="form-control" type="date" name="fechaIng" id="fechaIng" value="">
+												<p class="help-block">DD/MM/AAAA</p>
+	                                        </div>
+									</div>
+									<div  class="col-lg-4">		
+											<div class="form-group">
+	                                            <label>Socio de:</label>
+												<div>
+													<label class="radio-inline" for="interact">
+														<input type="radio" name="tipoRueda" id="interact" value="Interact" onclick="chequearRueda()">Interact
+													</label>
+												    <label class="radio-inline" for="rotaract">
+														<input type="radio" name="tipoRueda" id="rotaract" value="Rotaract" onclick="chequearRueda()"> Rotaract
+													</label>
+													<label class="radio-inline" for="rotary">
+														<input type="radio" name="tipoRueda" id="rotary" value="Rotary" onclick="chequearRueda()"> Rotary
+													</label>  
+												</div>
+	                                        </div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-lg-12">
+										<div class="alert alert-warning">
+	                                            Marca tu cargo actual, cargo futuro y todos los cargos por los que hayas pasado en tu club y el período correspondiente 
+												(si tuviste el mismo cargo en diferentes períodos, podes marcarlos todos sosteniendo la tecla CTRL y haciendo click en cada uno):
+	                                    </div>
+									</div>
+								</div>
+								<div class="row panel">
+									<div class="col-lg-2">
+											<div class="form-group">
+                                            <label>
+                                                 Presidente:
+												 <input type="checkbox" name="cargosPasadosClub[]" value="21" id="21">
+                                            </label>
+											<select name="periodoClub21[]" size="4" multiple class="form-control" id="periodoClub21">
+												<option value="52">2015-2016</option>
+												<option value="51">2014-2015</option>
+												<option value="50">2013-2014</option>
+												<option value="49">2012-2013</option>
+												<option value="48">2011-2012</option>
+												<option value="47">2010-2011</option>
+												<option value="46">2009-2010</option>
+												<option value="45">2008-2009</option>
+												<option value="44">2007-2008</option>
+												<option value="43">2006-2007</option>
+												<option value="42">2005-2006</option>
+												<option value="41">2004-2005</option>
+											</select>
+											</div>
+									</div>
+									<div class="col-lg-2">
+											<div class="form-group">
+                                            <label>
+                                                 Vice Presidente:
+												 <input type="checkbox"  name="cargosPasadosClub[]" value="22" id="22">
+                                            </label>
+											<select name="periodoClub22[]" size="4" multiple class="form-control"  id="periodoClub22">
+												<option value="54">2017-2018</option>
+												<option value="53">2016-2017</option>
+												<option value="52">2015-2016</option>
+												<option value="51">2014-2015</option>
+												<option value="50">2013-2014</option>
+												<option value="49">2012-2013</option>
+												<option value="48">2011-2012</option>
+												<option value="47">2010-2011</option>
+												<option value="46">2009-2010</option>
+												<option value="45">2008-2009</option>
+												<option value="44">2007-2008</option>
+												<option value="43">2006-2007</option>
+												<option value="42">2005-2006</option>
+												<option value="41">2004-2005</option>
+											</select>
+											</div>
+									</div>
+									<div class="col-lg-2">
+											<div class="form-group">
+                                            <label>
+                                                 Secretario:
+												 <input type="checkbox"  name="cargosPasadosClub[]" value="23" id="23">
+                                            </label>
+											<select name="periodoClub23[]" size="4" multiple class="form-control" id="periodoClub23">
+												<option value="52">2015-2016</option>
+												<option value="51">2014-2015</option>
+												<option value="50">2013-2014</option>
+												<option value="49">2012-2013</option>
+												<option value="48">2011-2012</option>
+												<option value="47">2010-2011</option>
+												<option value="46">2009-2010</option>
+												<option value="45">2008-2009</option>
+												<option value="44">2007-2008</option>
+												<option value="43">2006-2007</option>
+												<option value="42">2005-2006</option>
+												<option value="41">2004-2005</option>
+											</select>
+											</div>
+									</div>
+									<div class="col-lg-2">
+											<div class="form-group">
+                                            <label>
+                                                 Tesorero:
+												 <input type="checkbox" name="cargosPasadosClub[]" value="24" id="24">
+                                            </label>
+											<select name="periodoClub24[]" size="4" multiple class="form-control"  id="periodoClub24">
+												<option value="54">2017-2018</option>
+												<option value="53">2016-2017</option>
+												<option value="52">2015-2016</option>
+												<option value="51">2014-2015</option>
+												<option value="50">2013-2014</option>
+												<option value="49">2012-2013</option>
+												<option value="48">2011-2012</option>
+												<option value="47">2010-2011</option>
+												<option value="46">2009-2010</option>
+												<option value="45">2008-2009</option>
+												<option value="44">2007-2008</option>
+												<option value="43">2006-2007</option>
+												<option value="42">2005-2006</option>
+												<option value="41">2004-2005</option>
+											</select>
+											</div>
+									</div>
+									<div class="col-lg-2">
+											<div class="form-group">
+                                            <label>
+                                                 Dir. en Directiva:
+												 <input type="checkbox" name="cargosPasadosClub[]" value="26" id="26">
+                                            </label>
+											<select name="periodoClub26[]" size="4" multiple class="form-control" id="periodoClub26">
+												<option value="54">2017-2018</option>
+												<option value="53">2016-2017</option>
+												<option value="52">2015-2016</option>
+												<option value="51">2014-2015</option>
+												<option value="50">2013-2014</option>
+												<option value="49">2012-2013</option>
+												<option value="48">2011-2012</option>
+												<option value="47">2010-2011</option>
+												<option value="46">2009-2010</option>
+												<option value="45">2008-2009</option>
+												<option value="44">2007-2008</option>
+												<option value="43">2006-2007</option>
+												<option value="42">2005-2006</option>
+												<option value="41">2004-2005</option>
+											</select>
+											</div>
+									</div>
+									<div class="col-lg-2">
+											<div class="form-group">
+                                            <label>
+                                                 Director de RRPP:
+												 <input type="checkbox" name="cargosPasadosClub[]" value="27" id="27">
+                                            </label>
+											
+											<select name="periodoClub27[]" size="4" multiple class="form-control" id="periodoClub27">
+												<option value="54">2017-2018</option>
+												<option value="53">2016-2017</option>
+												<option value="52">2015-2016</option>
+												<option value="51">2014-2015</option>
+												<option value="50">2013-2014</option>
+												<option value="49">2012-2013</option>
+												<option value="48">2011-2012</option>
+												<option value="47">2010-2011</option>
+												<option value="46">2009-2010</option>
+												<option value="45">2008-2009</option>
+												<option value="44">2007-2008</option>
+												<option value="43">2006-2007</option>
+												<option value="42">2005-2006</option>
+												<option value="41">2004-2005</option>
+											</select>
+											</div>
+									</div>
+								</div>
+								<div class="row panel">
+									<div class="col-lg-2">
+											<label class="small">
+                                                 Dir. Desarrollo Prof:
+												 <input type="checkbox" name="cargosPasadosClub[]" value="28" id="28">
+                                            </label>
+											
+											<select name="periodoClub28[]" size="4" multiple class="form-control" id="periodoClub28">
+												<option value="54">2017-2018</option>
+												<option value="53">2016-2017</option>
+												<option value="52">2015-2016</option>
+												<option value="51">2014-2015</option>
+												<option value="50">2013-2014</option>
+												<option value="49">2012-2013</option>
+												<option value="48">2011-2012</option>
+												<option value="47">2010-2011</option>
+												<option value="46">2009-2010</option>
+												<option value="45">2008-2009</option>
+												<option value="44">2007-2008</option>
+												<option value="43">2006-2007</option>
+												<option value="42">2005-2006</option>
+												<option value="41">2004-2005</option>
+											</select>
+									</div>
+									<div class="col-lg-2">
+											<label class="small">
+                                                 Dir. Servicio Comunidad: 
+												<input type="checkbox" name="cargosPasadosClub[]" value="29" id="29">
+                                            </label>
+											<select name="periodoClub29[]" size="4" multiple class="form-control" id="periodoClub29">
+												<option value="54">2017-2018</option>
+												<option value="53">2016-2017</option>
+												<option value="52">2015-2016</option>
+												<option value="51">2014-2015</option>
+												<option value="50">2013-2014</option>
+												<option value="49">2012-2013</option>
+												<option value="48">2011-2012</option>
+												<option value="47">2010-2011</option>
+												<option value="46">2009-2010</option>
+												<option value="45">2008-2009</option>
+												<option value="44">2007-2008</option>
+												<option value="43">2006-2007</option>
+												<option value="42">2005-2006</option>
+												<option value="41">2004-2005</option>
+											</select>
+									</div>
+									<div class="col-lg-2">
+											<label class="small">
+                                                 Dir. Servicio en el Club:
+												<input type="checkbox" name="cargosPasadosClub[]" value="30" id="30">
+                                            </label>
+											<select name="periodoClub30[]" size="4" multiple class="form-control" id="periodoClub30">
+												<option value="54">2017-2018</option>
+												<option value="53">2016-2017</option>
+												<option value="52">2015-2016</option>
+												<option value="51">2014-2015</option>
+												<option value="50">2013-2014</option>
+												<option value="49">2012-2013</option>
+												<option value="48">2011-2012</option>
+												<option value="47">2010-2011</option>
+												<option value="46">2009-2010</option>
+												<option value="45">2008-2009</option>
+												<option value="44">2007-2008</option>
+												<option value="43">2006-2007</option>
+												<option value="42">2005-2006</option>
+												<option value="41">2004-2005</option>
+											</select>
+									</div>
+									<div class="col-lg-2">
+											<label class="small">
+												Dir. de Finanzas:
+												<input type="checkbox" name="cargosPasadosClub[]" value="31" id="31">
+                                            </label>
+											<select  name="periodoClub31[]" size="4" multiple class="form-control"id="periodoClub31">
+												<option value="54">2017-2018</option>
+												<option value="53">2016-2017</option>
+												<option value="52">2015-2016</option>
+												<option value="51">2014-2015</option>
+												<option value="50">2013-2014</option>
+												<option value="49">2012-2013</option>
+												<option value="48">2011-2012</option>
+												<option value="47">2010-2011</option>
+												<option value="46">2009-2010</option>
+												<option value="45">2008-2009</option>
+												<option value="44">2007-2008</option>
+												<option value="43">2006-2007</option>
+												<option value="42">2005-2006</option>
+												<option value="41">2004-2005</option>
+											</select>
+									</div>
+									<div class="col-lg-2">
+											<label class="small">
+												Dir. Internacionales:
+												<input type="checkbox" name="cargosPasadosClub[]" value="32" id="32">
+                                            </label>
+											<select  name="periodoClub32[]" size="4" multiple class="form-control"id="periodoClub32">
+												<option value="54">2017-2018</option>
+												<option value="53">2016-2017</option>
+												<option value="52">2015-2016</option>
+												<option value="51">2014-2015</option>
+												<option value="50">2013-2014</option>
+												<option value="49">2012-2013</option>
+												<option value="48">2011-2012</option>
+												<option value="47">2010-2011</option>
+												<option value="46">2009-2010</option>
+												<option value="45">2008-2009</option>
+												<option value="44">2007-2008</option>
+												<option value="43">2006-2007</option>
+												<option value="42">2005-2006</option>
+												<option value="41">2004-2005</option>
+											</select>
+									</div>
+									<div class="col-lg-2">
+											<label>
+												Enlace con Rotary: 
+												<input type="checkbox" name="cargosPasadosClub[]" value="33" id="33">
+                                            </label>
+											<select  name="periodoClub33[]" size="4" multiple class="form-control"id="periodoClub33">
+												<option value="54">2017-2018</option>
+												<option value="53">2016-2017</option>
+												<option value="52">2015-2016</option>
+												<option value="51">2014-2015</option>
+												<option value="50">2013-2014</option>
+												<option value="49">2012-2013</option>
+												<option value="48">2011-2012</option>
+												<option value="47">2010-2011</option>
+												<option value="46">2009-2010</option>
+												<option value="45">2008-2009</option>
+												<option value="44">2007-2008</option>
+												<option value="43">2006-2007</option>
+												<option value="42">2005-2006</option>
+												<option value="41">2004-2005</option>
+											</select>
+									</div>
+								</div>
+								<div class="row panel">
+									<div class="col-lg-2">
+										<label>
+												Enlace con Interact:
+												<input type="checkbox" name="cargosPasadosClub[]" value="34" id="34">
+                                            </label>
+											<select  name="periodoClub34[]" size="4" multiple class="form-control"id="periodoClub34">
+												<option value="54">2017-2018</option>
+												<option value="53">2016-2017</option>
+												<option value="52">2015-2016</option>
+												<option value="51">2014-2015</option>
+												<option value="50">2013-2014</option>
+												<option value="49">2012-2013</option>
+												<option value="48">2011-2012</option>
+												<option value="47">2010-2011</option>
+												<option value="46">2009-2010</option>
+												<option value="45">2008-2009</option>
+												<option value="44">2007-2008</option>
+												<option value="43">2006-2007</option>
+												<option value="42">2005-2006</option>
+												<option value="41">2004-2005</option>
+											</select>
+									</div>
+									<div class="col-lg-2">
+										<label>
+												Prosecretario
+												<input type="checkbox" name="cargosPasadosClub[]" value="35" id="35">
+                                            </label>
+											<select  name="periodoClub35[]" size="4" multiple class="form-control"id="periodoClub35">
+												<option value="54">2017-2018</option>
+												<option value="53">2016-2017</option>
+												<option value="52">2015-2016</option>
+												<option value="51">2014-2015</option>
+												<option value="50">2013-2014</option>
+												<option value="49">2012-2013</option>
+												<option value="48">2011-2012</option>
+												<option value="47">2010-2011</option>
+												<option value="46">2009-2010</option>
+												<option value="45">2008-2009</option>
+												<option value="44">2007-2008</option>
+												<option value="43">2006-2007</option>
+												<option value="42">2005-2006</option>
+												<option value="41">2004-2005</option>
+											</select>
+									</div>
+									<div class="col-lg-2">
+										<label>
+												Protesorero:
+												<input type="checkbox" name="cargosPasadosClub[]" value="36" id="36">
+                                            </label>
+											<select  name="periodoClub36[]" size="4" multiple class="form-control"id="periodoClub36">
+												<option value="54">2017-2018</option>
+												<option value="53">2016-2017</option>
+												<option value="52">2015-2016</option>
+												<option value="51">2014-2015</option>
+												<option value="50">2013-2014</option>
+												<option value="49">2012-2013</option>
+												<option value="48">2011-2012</option>
+												<option value="47">2010-2011</option>
+												<option value="46">2009-2010</option>
+												<option value="45">2008-2009</option>
+												<option value="44">2007-2008</option>
+												<option value="43">2006-2007</option>
+												<option value="42">2005-2006</option>
+												<option value="41">2004-2005</option>
+											</select>
+									</div>
+									<div class="col-lg-2">
+										<label>
+												Socio:
+												<input type="checkbox" name="cargosPasadosClub[]" value="37" id="37">
+                                            </label>
+											<select  name="periodoClub37[]" size="4" multiple class="form-control"id="periodoClub37">
+												<option value="54">2017-2018</option>
+												<option value="53">2016-2017</option>
+												<option value="52">2015-2016</option>
+												<option value="51">2014-2015</option>
+												<option value="50">2013-2014</option>
+												<option value="49">2012-2013</option>
+												<option value="48">2011-2012</option>
+												<option value="47">2010-2011</option>
+												<option value="46">2009-2010</option>
+												<option value="45">2008-2009</option>
+												<option value="44">2007-2008</option>
+												<option value="43">2006-2007</option>
+												<option value="42">2005-2006</option>
+												<option value="41">2004-2005</option>
+											</select>
+									</div>
+									<div class="col-lg-2">
+										<label>
+												Aspirante:
+												<input type="checkbox" name="cargosPasadosClub[]" value="38" id="38">
+                                            </label>
+											<select  name="periodoClub38[]" size="4" multiple class="form-control"id="periodoClub38">
+												<option value="54">2017-2018</option>
+												<option value="53">2016-2017</option>
+												<option value="52">2015-2016</option>
+												<option value="51">2014-2015</option>
+												<option value="50">2013-2014</option>
+												<option value="49">2012-2013</option>
+												<option value="48">2011-2012</option>
+												<option value="47">2010-2011</option>
+												<option value="46">2009-2010</option>
+												<option value="45">2008-2009</option>
+												<option value="44">2007-2008</option>
+												<option value="43">2006-2007</option>
+												<option value="42">2005-2006</option>
+												<option value="41">2004-2005</option>
+											</select>
+									</div>
+									<div class="col-lg-2">
+										<label>
+												Colaborador:
+												<input type="checkbox" name="cargosPasadosClub[]" value="39" id="39">
+                                            </label>
+											<select  name="periodoClub39[]" size="4" multiple class="form-control"id="periodoClub39">
+												<option value="54">2017-2018</option>
+												<option value="53">2016-2017</option>
+												<option value="52">2015-2016</option>
+												<option value="51">2014-2015</option>
+												<option value="50">2013-2014</option>
+												<option value="49">2012-2013</option>
+												<option value="48">2011-2012</option>
+												<option value="47">2010-2011</option>
+												<option value="46">2009-2010</option>
+												<option value="45">2008-2009</option>
+												<option value="44">2007-2008</option>
+												<option value="43">2006-2007</option>
+												<option value="42">2005-2006</option>
+												<option value="41">2004-2005</option>
+											</select>
+									</div>
+								</div>
+							</form>
+	                            
+	  			</div>
+  			</div>
+                    <!-- /.panel -->
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+        </div>
+
+</body></html>
